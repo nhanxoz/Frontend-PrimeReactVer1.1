@@ -13,18 +13,18 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { ProductService } from '../service/ProductService';
-
+import createDOMPurify from "dompurify";
 const Crud = () => {
     let emptyProduct = {
         id: null,
-        name: '',
+        name: "",
         image: null,
-        description: '',
+        description: "",
         category: null,
         price: 0,
         quantity: 0,
         rating: 0,
-        inventoryStatus: 'INSTOCK'
+        inventoryStatus: "INSTOCK",
     };
 
     const [products, setProducts] = useState(null);
@@ -45,7 +45,7 @@ const Crud = () => {
     }, []);
 
     const formatCurrency = (value) => {
-        return value.toLocaleString("en-US", { style: "currency", currency: "USD" });
+        return value.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
     };
 
     const openNew = () => {
@@ -213,7 +213,7 @@ const Crud = () => {
         return (
             <>
                 <span className="p-column-title">Code</span>
-                {rowData.code}
+                {rowData.ID}
             </>
         );
     };
@@ -222,7 +222,7 @@ const Crud = () => {
         return (
             <>
                 <span className="p-column-title">Name</span>
-                {rowData.name}
+                {rowData.Name}
             </>
         );
     };
@@ -231,16 +231,24 @@ const Crud = () => {
         return (
             <>
                 <span className="p-column-title">Image</span>
-                <img src={`http://localhost:8080/${rowData.image}`} alt={rowData.image} className="shadow-2" width="100" />
+                <div>{rowData.Alias}</div>
             </>
         );
     };
 
-    const priceBodyTemplate = (rowData) => {
+    const opriceBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">Price</span>
-                {formatCurrency(rowData.price)}
+                <span className="p-column-title">OriginPrice</span>
+                {formatCurrency(rowData.OriginPrice)}
+            </>
+        );
+    };
+    const ppriceBodyTemplate = (rowData) => {
+        return (
+            <>
+                <span className="p-column-title">PromotionPrice</span>
+                {formatCurrency(rowData.PromotionPrice)}
             </>
         );
     };
@@ -249,25 +257,26 @@ const Crud = () => {
         return (
             <>
                 <span className="p-column-title">Category</span>
-                {rowData.category}
+                {rowData.CategoryID}
             </>
         );
     };
 
-    const ratingBodyTemplate = (rowData) => {
+    const ContentBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">Reviews</span>
-                <Rating value={rowData.rating} readonly cancel={false} />
+                <span className="p-column-title">Content</span>
+                <Rating value={"good"} readonly cancel={false} />
+                {/* {<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(k) }} />} */}
             </>
         );
     };
 
-    const statusBodyTemplate = (rowData) => {
+    const descriptionBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">Status</span>
-                <span className={`product-badge status-${rowData.inventoryStatus.toLowerCase()}`}>{rowData.inventoryStatus}</span>
+                <span className="p-column-title">Description</span>
+                <span>{rowData.Description}</span>
             </>
         );
     };
@@ -309,7 +318,7 @@ const Crud = () => {
             <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteSelectedProducts} />
         </>
     );
-
+    const DOMPurify = createDOMPurify(window);
     return (
         <div className="grid crud-demo">
             <div className="col-12">
@@ -322,7 +331,7 @@ const Crud = () => {
                         value={products}
                         selection={selectedProducts}
                         onSelectionChange={(e) => setSelectedProducts(e.value)}
-                        dataKey="id"
+                        dataKey="ID"
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
@@ -335,13 +344,14 @@ const Crud = () => {
                         responsiveLayout="scroll"
                     >
                         <Column selectionMode="multiple" headerStyle={{ width: "3rem" }}></Column>
-                        <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ width: "14%", minWidth: "10rem" }}></Column>
+                        <Column field="ID" header="ID" sortable body={codeBodyTemplate} headerStyle={{ width: "14%", minWidth: "10rem" }}></Column>
                         <Column field="name" header="Name" sortable body={nameBodyTemplate} headerStyle={{ width: "14%", minWidth: "10rem" }}></Column>
-                        <Column header="Image" body={imageBodyTemplate} headerStyle={{ width: "14%", minWidth: "10rem" }}></Column>
-                        <Column field="price" header="Price" body={priceBodyTemplate} sortable headerStyle={{ width: "14%", minWidth: "8rem" }}></Column>
+                        <Column header="Alias" body={imageBodyTemplate} headerStyle={{ width: "14%", minWidth: "10rem" }}></Column>
+                        <Column field="originprice" header="OriginPrice" body={opriceBodyTemplate} sortable headerStyle={{ width: "14%", minWidth: "8rem" }}></Column>
+                        <Column field="PromotionPrice" header="PromotionPrice" body={ppriceBodyTemplate} sortable headerStyle={{ width: "14%", minWidth: "8rem" }}></Column>
                         <Column field="category" header="Category" sortable body={categoryBodyTemplate} headerStyle={{ width: "14%", minWidth: "10rem" }}></Column>
-                        <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable headerStyle={{ width: "14%", minWidth: "10rem" }}></Column>
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable headerStyle={{ width: "14%", minWidth: "10rem" }}></Column>
+                        <Column field="Description" header="Description" body={descriptionBodyTemplate} sortable headerStyle={{ width: "14%", minWidth: "10rem" }}></Column>
+                        {/* <Column field="Content" header="Content" body={ContentBodyTemplate} sortable headerStyle={{ width: "14%", minWidth: "10rem" }}></Column> */}
                         <Column body={actionBodyTemplate}></Column>
                     </DataTable>
 
@@ -404,7 +414,7 @@ const Crud = () => {
             </div>
         </div>
     );
-}
+};
 
 const comparisonFn = function (prevProps, nextProps) {
     return prevProps.location.pathname === nextProps.location.pathname;

@@ -6,7 +6,8 @@ export class ProductService {
     }
 
     getProducts() {
-        return axios.get("http://localhost:8080/apiFood/foods").then((res) => res.data.data);
+        
+        return axios.get("http://localhost:1486/api/user/food").then((res) => res.data.data);
     }
     deleteProduct(id) {
         const urlDelete = `http://localhost:8080/apiFood/foods/` + String(id);
